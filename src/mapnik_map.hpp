@@ -81,8 +81,8 @@ class Map: public node::ObjectWrap {
     Map(int width, int height);
     Map(int width, int height, std::string const& srs);
 
-    void acquire();
-    void release();
+    static Handle<Value> acquire(const Arguments &args);
+    static Handle<Value> release(const Arguments &args);
     int active() const;
 
   private:

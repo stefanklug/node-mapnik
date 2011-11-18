@@ -91,6 +91,9 @@ void Map::Initialize(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "features", features);
     NODE_SET_PROTOTYPE_METHOD(constructor, "describe_data", describe_data);
 
+    NODE_SET_PROTOTYPE_METHOD(constructor, "acquire", acquire);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "release", release);
+
     // properties
     ATTR(constructor, "srs", get_prop, set_prop);
     ATTR(constructor, "width", get_prop, set_prop);
@@ -101,8 +104,6 @@ void Map::Initialize(Handle<Object> target) {
     ATTR(constructor, "background", get_prop, set_prop);
 
     target->Set(String::NewSymbol("Map"),constructor->GetFunction());
-    //eio_set_max_poll_reqs(10);
-    //eio_set_min_parallel(10);
 }
 
 Map::Map(int width, int height) :
@@ -121,14 +122,23 @@ Map::~Map()
     // release is handled by boost::shared_ptr
 }
 
-void Map::acquire() {
-    //std::cerr << "acquiring!!\n";
-    ++in_use_;
+Handle<Value> Map::acquire(const Arguments& args) {
+    HandleScope scope;
+    Map* m = ObjectWrap::Unwrap<Map>(args.This());
+    std::cerr << "acquiring!!" << m << "\n";
+    if (m->in_use_ > 0) {
+        std::cerr << "ack, already in use by " << m->in_use_ << " other threads\n";
+    }
+    m->in_use_++;
+    return Undefined();
 }
 
-void Map::release() {
-    //std::cerr << "releasing!!\n";
-    --in_use_;
+Handle<Value> Map::release(const Arguments& args) {
+    HandleScope scope;
+    std::cerr << "releasing!!\n";
+    Map* m = ObjectWrap::Unwrap<Map>(args.This());
+    m->in_use_--;
+    return Undefined();
 }
 
 int Map::active() const {
@@ -1142,7 +1152,7 @@ Handle<Value> Map::render(const Arguments& args)
     }
 
     ev_ref(EV_DEFAULT_UC);
-    m->acquire();
+    //m->acquire();
     m->Ref();
     return Undefined();
 }
@@ -1221,7 +1231,7 @@ int Map::EIO_AfterRenderGrid(eio_req *req)
       FatalException(try_catch);
     }
 
-    closure->m->release();
+    //closure->m->release();
     closure->m->Unref();
     closure->g->_unref();
     closure->cb.Dispose();
@@ -1276,7 +1286,7 @@ int Map::EIO_AfterRenderImage(eio_req *req)
       FatalException(try_catch);
     }
 
-    closure->m->release();
+    //closure->m->release();
     closure->m->Unref();
     closure->im->_unref();
     closure->cb.Dispose();
@@ -1452,7 +1462,7 @@ int Map::EIO_AfterRenderFile(eio_req *req)
         FatalException(try_catch);
     }
 
-    closure->m->release();
+    //closure->m->release();
     closure->m->Unref();
     closure->cb.Dispose();
     delete closure;
@@ -1902,7 +1912,7 @@ Handle<Value> Map::render_grid(const Arguments& args)
 
     eio_custom(EIO_RenderGrid2, EIO_PRI_DEFAULT, EIO_AfterRenderGrid2, closure);
     ev_ref(EV_DEFAULT_UC);
-    m->acquire();
+    //m->acquire();
     m->Ref();
     return Undefined();
 
@@ -2046,7 +2056,7 @@ int Map::EIO_AfterRenderGrid2(eio_req *req)
       FatalException(try_catch);
     }
 
-    closure->m->release();
+    //closure->m->release();
     closure->m->Unref();
     closure->cb.Dispose();
     delete closure;
