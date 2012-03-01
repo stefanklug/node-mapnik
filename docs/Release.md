@@ -33,7 +33,7 @@ Increment version in `package.json` and `src/node_mapnik.cpp`
 
 ## Publish
 
-First, remove all files/folder in your node-mapnik checkout that are not either checked into git or listed in .gitigore so that the files do not end up in the npm bundle.
+First, remove all files/folder in your node-mapnik checkout that are not either checked into git or listed in .gitignore so that the files do not end up in the npm bundle.
 
 Doing `npm publish` on the clean checkout works well for ensuring this is not a problem.
 
