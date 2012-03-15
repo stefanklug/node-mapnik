@@ -73,7 +73,7 @@ exports['test images'] = function(beforeExit, assert) {
     s += '</Map>';
     m3.fromStringSync(s);
 
-    var mem_datasource = new mapnik.MemoryDatasource({'extent': '-180,-90,180,90'});
+    /*var mem_datasource = new mapnik.MemoryDatasource({'extent': '-180,-90,180,90'});
     mem_datasource.add({ 'x': 0, 'y': 0 });
     mem_datasource.add({ 'x': 1, 'y': 1 });
     mem_datasource.add({ 'x': 2, 'y': 2 });
@@ -88,5 +88,6 @@ exports['test images'] = function(beforeExit, assert) {
         assert.equal(im_blank3.painted(), true);
         assert.equal(im_blank3.background, undefined);
     });
+    */
 
 };

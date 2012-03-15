@@ -233,6 +233,11 @@ public:
         *usage_ += (sizeof(sym)*factor_);
     }
 
+    void operator () ( mapnik::glyph_symbolizer const& sym)
+    {
+        *usage_ += (sizeof(sym)*factor_);
+    }
+
     unsigned int * usage_;
     unsigned int factor_;
 };
@@ -306,7 +311,7 @@ Handle<Value> Map::get_prop(Local<String> property,
         else
             return Undefined();
     }
-    else if (a == "parameters") {
+    /*else if (a == "parameters") {
         Local<Object> ds = Object::New();
         mapnik::parameters const& params = m->map_->get_extra_parameters();
         mapnik::parameters::const_iterator it = params.begin();
@@ -317,7 +322,7 @@ Handle<Value> Map::get_prop(Local<String> property,
             boost::apply_visitor( serializer, it->second );
         }
         return scope.Close(ds);
-    }
+    }*/
     return Undefined();
 }
 
@@ -394,7 +399,7 @@ void Map::set_prop(Local<String> property,
         Color *c = ObjectWrap::Unwrap<Color>(obj);
         m->map_->set_background(*c->get());
     }
-    else if (a == "parameters") {
+    /*else if (a == "parameters") {
         if (!value->IsObject())
             ThrowException(Exception::TypeError(
               String::New("object expected for map.parameters")));
@@ -428,7 +433,7 @@ void Map::set_prop(Local<String> property,
             i++;
         }
         m->map_->set_extra_parameters(params);
-    }
+    }*/
 }
 
 Handle<Value> Map::scaleDenominator(const Arguments& args)
@@ -1307,7 +1312,7 @@ void Map::EIO_RenderGrid(uv_work_t* req)
         std::set<std::string> attributes = closure->g->get()->property_names();
 
         std::string join_field = closure->g->get()->get_key();
-        if (join_field == closure->g->get()->key_name())
+        if (join_field == closure->g->get()->get_key())
         {
             // TODO - should feature.id() be a first class attribute?
             if (attributes.find(join_field) != attributes.end())
@@ -1702,7 +1707,7 @@ Handle<Value> Map::renderLayerSync(const Arguments& args)
         std::set<std::string> attributes = g->get()->property_names();
 
         std::string join_field = g->get()->get_key();
-        if (join_field == g->get()->key_name())
+        if (join_field == g->get()->get_key())
         {
             // TODO - should feature.id() be a first class attribute?
             if (attributes.find(join_field) != attributes.end())
@@ -2092,7 +2097,7 @@ void Map::EIO_RenderGrid2(uv_work_t* req)
 
     std::string const& join_field = closure->join_field;
 
-    if (join_field == closure->grid_ptr->key_name())
+    if (join_field == closure->grid_ptr->get_key())
     {
         // TODO - should feature.id() be a first class attribute?
         if (attributes.find(join_field) != attributes.end())

@@ -85,7 +85,7 @@ static inline Handle<Value> available_font_faces(const Arguments& args)
     return scope.Close(a);
 }
 
-static inline Handle<Value> available_font_files(const Arguments& args)
+/*static inline Handle<Value> available_font_files(const Arguments& args)
 {
     HandleScope scope;
     std::map<std::string,std::pair<int,std::string> > const& mapping = mapnik::freetype_engine::get_mapping();
@@ -96,7 +96,7 @@ static inline Handle<Value> available_font_files(const Arguments& args)
         obj->Set(String::NewSymbol(itr->first.c_str()),String::New(itr->second.second.c_str()));
     }
     return scope.Close(obj);
-}
+}*/
 
 
 }

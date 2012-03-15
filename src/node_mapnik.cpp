@@ -9,28 +9,26 @@
 // node-mapnik
 #include "mapnik_map.hpp"
 #include "mapnik_color.hpp"
-#include "mapnik_geometry.hpp"
-#include "mapnik_feature.hpp"
+//#include "mapnik_geometry.hpp"
+//#include "mapnik_feature.hpp"
 #include "mapnik_fonts.hpp"
 #include "mapnik_plugins.hpp"
 #include "mapnik_palette.hpp"
 #include "mapnik_projection.hpp"
 #include "mapnik_layer.hpp"
 #include "mapnik_datasource.hpp"
-#include "mapnik_featureset.hpp"
-#include "mapnik_js_datasource.hpp"
-#include "mapnik_memory_datasource.hpp"
+//#include "mapnik_featureset.hpp"
+//#include "mapnik_js_datasource.hpp"
+//#include "mapnik_memory_datasource.hpp"
 #include "mapnik_image.hpp"
 #include "mapnik_image_view.hpp"
 #include "mapnik_grid.hpp"
 #include "mapnik_grid_view.hpp"
-#include "mapnik_expression.hpp"
+//#include "mapnik_expression.hpp"
 #include "utils.hpp"
 
 // mapnik
 #include <mapnik/version.hpp>
-#include <mapnik/marker_cache.hpp>
-#include <mapnik/mapped_memory_cache.hpp>
 
 // boost
 #include <boost/version.hpp>
@@ -69,8 +67,6 @@ static std::string format_version(int version)
 static Handle<Value> clearCache(const Arguments& args)
 {
     HandleScope scope;
-    mapnik::marker_cache::instance()->clear();
-    mapnik::mapped_memory_cache::instance()->clear();
     return Undefined();
 }
 
@@ -83,15 +79,15 @@ extern "C" {
     NODE_SET_METHOD(target, "datasources", node_mapnik::available_input_plugins);
     NODE_SET_METHOD(target, "register_fonts", node_mapnik::register_fonts);
     NODE_SET_METHOD(target, "fonts", node_mapnik::available_font_faces);
-    NODE_SET_METHOD(target, "fontFiles", node_mapnik::available_font_files);
-    NODE_SET_METHOD(target, "clearCache", clearCache);
+    //NODE_SET_METHOD(target, "fontFiles", node_mapnik::available_font_files);
+    //NODE_SET_METHOD(target, "clearCache", clearCache);
     NODE_SET_METHOD(target, "gc", gc);
 
     // Classes
     Map::Initialize(target);
     Color::Initialize(target);
-    Geometry::Initialize(target);
-    Feature::Initialize(target);
+    //Geometry::Initialize(target);
+    //Feature::Initialize(target);
     Image::Initialize(target);
     ImageView::Initialize(target);
     Palette::Initialize(target);
@@ -100,10 +96,10 @@ extern "C" {
     Grid::Initialize(target);
     GridView::Initialize(target);
     Datasource::Initialize(target);
-    Featureset::Initialize(target);
-    JSDatasource::Initialize(target);
-    MemoryDatasource::Initialize(target);
-    Expression::Initialize(target);
+    //Featureset::Initialize(target);
+    //JSDatasource::Initialize(target);
+    //MemoryDatasource::Initialize(target);
+    //Expression::Initialize(target);
 
     // versions of deps
     Local<Object> versions = Object::New();

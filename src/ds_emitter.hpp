@@ -78,14 +78,18 @@ static void describe_datasource(Local<Object> description, mapnik::datasource_pt
         }
         description->Set(String::NewSymbol("fields"), fields);
     
+        // get first geometry type using naive first hit approach
+        // TODO proper approach --> https://trac.mapnik.org/ticket/701
+    #if MAPNIK_VERSION >= 800
         mapnik::query q(ds->envelope());
-
+    #else
+        mapnik::query q(ds->envelope(),1.0,1.0);
+    #endif
+    
         mapnik::featureset_ptr fs = ds->features(q);
         description->Set(String::NewSymbol("geometry_type"), Undefined());
-        description->Set(String::NewSymbol("has_features"), False());
+        description->Set(String::NewSymbol("has_features"), Boolean::New(false));
     
-        // TODO - need to remove this after this lands:
-        // https://github.com/mapnik/mapnik/issues/701
         if (fs)
         {
             mapnik::feature_ptr fp = fs->next();
@@ -96,42 +100,36 @@ static void describe_datasource(Local<Object> description, mapnik::datasource_pt
                 {
                     mapnik::geometry_type const& geom = fp->get_geometry(0);
                     mapnik::eGeomType g_type = geom.type();
-                    Local<String> js_type = String::New("unknown");
                     switch (g_type)
                     {
                         case mapnik::Point:
-                        {
-                           if (fp->num_geometries() > 1) {
-                               js_type = String::New("multipoint");
-                           } else {
-                               js_type = String::New("point");
-                           }
+                           description->Set(String::NewSymbol("geometry_type"), String::New("point"));
                            break;
-                        }
+      
+                        case mapnik::MultiPoint:
+                           description->Set(String::NewSymbol("geometry_type"), String::New("multipoint"));
+                           break;
+                           
                         case mapnik::Polygon:
-                        {
-                           if (fp->num_geometries() > 1) {
-                               js_type = String::New("multipolygon");
-                           } else {
-                               js_type = String::New("polygon");
-                           }
+                           description->Set(String::NewSymbol("geometry_type"), String::New("polygon"));
                            break;
-                        }
+      
+                        case mapnik::MultiPolygon:
+                           description->Set(String::NewSymbol("geometry_type"), String::New("multipolygon"));
+                           break;
+    
                         case mapnik::LineString:
-                        {
-                           if (fp->num_geometries() > 1) {
-                               js_type = String::New("multilinestring");
-                           } else {
-                               js_type = String::New("linestring");
-                           }
+                           description->Set(String::NewSymbol("geometry_type"), String::New("linestring"));
                            break;
-                        }
+      
+                        case mapnik::MultiLineString:
+                           description->Set(String::NewSymbol("geometry_type"), String::New("multilinestring"));
+                           break;
+                           
                         default:
-                        {
+                           description->Set(String::NewSymbol("geometry_type"), String::New("unknown"));
                            break;
-                        }
                     }
-                    description->Set(String::NewSymbol("geometry_type"), js_type);
                 }
             }
         }
@@ -177,16 +175,17 @@ static void datasource_features(Local<Array> a, mapnik::datasource_ptr ds, unsig
             unsigned idx = 0;
             while ((fp = fs->next()))
             {
-                if ((idx >= first) && (idx <= last || last == 0)) {
+                if  ((idx >= first) && (idx <= last || last == 0)) {
+                    std::map<std::string,mapnik::value> const& fprops = fp->props();
                     Local<Object> feat = Object::New();
-                    mapnik::feature_impl::iterator itr = fp->begin();
-                    mapnik::feature_impl::iterator end = fp->end();
-                    for ( ;itr!=end; ++itr)
+                    std::map<std::string,mapnik::value>::const_iterator it = fprops.begin();
+                    std::map<std::string,mapnik::value>::const_iterator end = fprops.end();
+                    for (; it != end; ++it)
                     {
-                        node_mapnik::params_to_object serializer( feat , boost::get<0>(*itr));
+                        node_mapnik::params_to_object serializer( feat , it->first);
                         // need to call base() since this is a mapnik::value
                         // not a mapnik::value_holder
-                        boost::apply_visitor( serializer, boost::get<1>(*itr).base() );
+                        boost::apply_visitor( serializer, it->second.base() );
                     }
     
                     // add feature id

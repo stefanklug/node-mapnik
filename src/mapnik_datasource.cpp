@@ -2,7 +2,7 @@
 #include <mapnik/datasource_cache.hpp>
 
 #include "mapnik_datasource.hpp"
-#include "mapnik_featureset.hpp"
+//#include "mapnik_featureset.hpp"
 #include "utils.hpp"
 #include "ds_emitter.hpp"
 
@@ -23,7 +23,7 @@ void Datasource::Initialize(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "parameters", parameters);
     NODE_SET_PROTOTYPE_METHOD(constructor, "describe", describe);
     NODE_SET_PROTOTYPE_METHOD(constructor, "features", features);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "featureset", featureset);
+    //NODE_SET_PROTOTYPE_METHOD(constructor, "featureset", featureset);
 
     target->Set(String::NewSymbol("Datasource"),constructor->GetFunction());
 }
@@ -200,6 +200,7 @@ Handle<Value> Datasource::features(const Arguments& args)
     return scope.Close(a);
 }
 
+/*
 Handle<Value> Datasource::featureset(const Arguments& args)
 {
 
@@ -241,3 +242,4 @@ Handle<Value> Datasource::featureset(const Arguments& args)
 
     return Undefined();
 }
+*/

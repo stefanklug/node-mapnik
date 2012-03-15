@@ -164,20 +164,20 @@ def build(bld):
     obj.source =  ["src/node_mapnik.cpp",
                    "src/mapnik_map.cpp",
                    "src/mapnik_color.cpp",
-                   "src/mapnik_geometry.cpp",
-                   "src/mapnik_feature.cpp",
+                   #"src/mapnik_geometry.cpp",
+                   #"src/mapnik_feature.cpp",
                    "src/mapnik_image.cpp",
                    "src/mapnik_image_view.cpp",
                    "src/mapnik_grid.cpp",
                    "src/mapnik_grid_view.cpp",
-                   "src/mapnik_js_datasource.cpp",
-                   "src/mapnik_memory_datasource.cpp",
+                   #"src/mapnik_js_datasource.cpp",
+                   #"src/mapnik_memory_datasource.cpp",
                    "src/mapnik_palette.cpp",
                    "src/mapnik_projection.cpp",
                    "src/mapnik_layer.cpp",
                    "src/mapnik_datasource.cpp",
-                   "src/mapnik_featureset.cpp",
-                   "src/mapnik_expression.cpp"
+                   #"src/mapnik_featureset.cpp",
+                   #"src/mapnik_expression.cpp"
                   ]
     obj.uselib = "MAPNIK"
     # install 'mapnik' module

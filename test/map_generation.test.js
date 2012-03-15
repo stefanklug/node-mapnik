@@ -53,6 +53,7 @@ exports['test asynchronous map rendering to file with actual data'] = function(b
 };
 
 
+/*
 if(mapnik.supports.cairo) {
     exports['test asynchronous map rendering to file with actual data and cairo'] = function(beforeExit, assert) {
 
@@ -69,6 +70,7 @@ if(mapnik.supports.cairo) {
         });
     };
 }
+*/
 
 exports['test asynchronous map rendering to file with actual data (guess file type) '] = function(beforeExit, assert) {
 
