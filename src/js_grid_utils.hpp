@@ -165,17 +165,25 @@ static void write_features(T const& grid_type,
                         // drop key unless requested
                         if (include_key) {
                             found = true;
+                            params_to_object serializer( feat ,  key_name);
+                            boost::apply_visitor( serializer, boost::get<1>(*itr).base() );
+                            /*
                             feat->Set(String::NewSymbol(key_name.c_str()),
                                 boost::apply_visitor(node_mapnik::value_converter(),
                                                      boost::get<1>(*itr).base()));
+                            */
                         }
                     }
                     else if ( (attributes.find(key_name) != attributes.end()) )
                     {
                         found = true;
+                        params_to_object serializer( feat ,  key_name);
+                        boost::apply_visitor( serializer, boost::get<1>(*itr).base() );
+                        /*
                         feat->Set(String::NewSymbol(key_name.c_str()),
                             boost::apply_visitor(node_mapnik::value_converter(),
                                                  boost::get<1>(*itr).base()));
+                        */
                     }
                 }
 
