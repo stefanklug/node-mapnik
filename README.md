@@ -106,6 +106,8 @@ Then run:
   
     make test
 
+Note: expect 2 test failures if built against Mapnik 2.0.0 and zero failures if built against >= 2.0.1.
+
 
 ## License
 
