@@ -49,16 +49,11 @@ For more sample code see 'examples/README.md'
 ## Depends
 
 * Node >= v0.6.0
-* Mapnik 2.1-dev (current master): (at least [207ecfd597](https://github.com/mapnik/mapnik/commit/207ecfd597d70a9fcc1b3c8e768049658e4085fc) / March 12, 2012)
-
+* Mapnik 2.0.x (but compatible with 2.1.x).
 
 ## Installation
 
-First install Mapnik master from github:
-
-    git clone https://github.com/mapnik/mapnik.git
-
-For more details see: https://github.com/mapnik/mapnik/wiki/Mapnik-Installation
+Install Mapnik: https://github.com/mapnik/mapnik/wiki/Mapnik-Installation
 
 Confirm that the `mapnik-config` program is available and on your $PATH.
 
@@ -66,6 +61,7 @@ To install node-mapnik locally for development or testing do:
 
     git clone git://github.com/mapnik/node-mapnik.git
     cd node-mapnik
+    git checkout mapnik-2.0.x
     ./configure
     make
 
@@ -78,14 +74,6 @@ Or set NODE_PATH to test importing:
     export NODE_PATH=./lib
     node -e "require.resolve('mapnik')"
 
-Or you can also install via npm
-  
-    npm install mapnik
-
-The above will install node-mapnik locally in a node_modules folder. To install globally do:
-
-    npm install -g mapnik
-
 
 ## Quick rendering test
 
@@ -95,13 +83,6 @@ From the source checkout root do:
   
     export NODE_PATH=./lib
     ./examples/simple/render.js ./examples/stylesheet.xml map.png
-
-
-## Using node-mapnik from your node app
-
-To require node-mapnik as a depedency of another package put in your package.json:
-
-    "dependencies"  : { "mapnik":"0.6.x" }
 
   
 ## Examples
