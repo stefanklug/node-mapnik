@@ -30,41 +30,19 @@ def write_mapnik_settings(fonts='undefined',input_plugins='undefined'):
         settings_template = "var path = require('path');\n" + settings_template
     open(settings,'w').write(settings_template % (fonts,input_plugins))
 
-def ensure_min_mapnik_revision(conf,revision=3055):
-    # mapnik-config was basically written for node-mapnik
-    # so a variety of kinks mean that we need a very
-    # recent version for things to work properly
-    # http://trac.mapnik.org/log/trunk/utils/mapnik-config
-
-    #TODO - if we require >=2503 then we can check return type not "Usage" string...
-    if popen("%s --libs" % conf.env['MAPNIK_CONFIG']).read().startswith('Usage') \
-      or popen("%s --input-plugins" % conf.env['MAPNIK_CONFIG']).read().startswith('Usage') \
-      or popen("%s --svn-revision" % conf.env['MAPNIK_CONFIG']).read().startswith('Usage'):
-        Utils.pprint('YELLOW', 'mapnik-config version is too old, mapnik > %s is required for auto-configuring build' % revision)
-        conf.fatal('please upgrade to mapnik trunk')
-
-    failed = False
-    found_ver = None
-
-    try:
-        found_ver = int(popen("%s --svn-revision" % conf.env['MAPNIK_CONFIG']).readline().strip())
-        if not found_ver >= revision:
-            failed = True
-            print found_ver,revision
+def ensure_mapnik_version(conf,min_version='2.0.0'):
+    found_version = popen("%s --version" % conf.env['MAPNIK_CONFIG']).readline().strip().replace('-pre','')
+    if not found_version:
+        Utils.pprint('RED',"Warning: Incompatible libmapnik version found (using mapnik-config --version), this 'node-mapnik' requires 'mapnik %s'" % min_version)
+    else:
+        f_parts = map(int,found_version.split('.'))
+        found_version_num = (f_parts[0]*100000)+(f_parts[1]*100)+f_parts[2]
+        m_parts = map(int,min_version.split('.'))
+        min_version_num = (m_parts[0]*100000)+(m_parts[1]*100)+m_parts[2]
+        if found_version_num >= min_version_num and found_version_num < 200100:
+            Utils.pprint('GREEN', 'Sweet, found compatible mapnik version %s (via mapnik-config)' % (found_version))
         else:
-            Utils.pprint('GREEN', 'Sweet, found viable mapnik svn-revision r%s (via mapnik-config)' % (found_ver))
-    except Exception,e:
-        print e
-        failed = True
-
-    if failed:
-        if found_ver:
-            msg = 'mapnik-config version is too old, mapnik > r%s is required for auto-configuring build, found only r%s' % (revision,found_ver)
-        else:
-            msg = 'mapnik-config version is too old, mapnik > r%s is required for auto-configuring build' % revision
-
-        Utils.pprint('YELLOW', msg)
-        conf.fatal('please upgrade to mapnik trunk')
+            Utils.pprint('RED',"Warning: Incompatible libmapnik version found (using mapnik-config --version), this 'node-mapnik' requires 'mapnik 2.0.x'")
 
 
 def set_options(opt):
@@ -87,8 +65,7 @@ def configure(conf):
     if not mapnik_config:
         conf.fatal('\n\nSorry, the "mapnik-config" program was not found.\nOnly Mapnik >=2.x provides this tool.\n')
         
-    # this breaks with git cloned mapnik repos, so skip it
-    #ensure_min_mapnik_revision(conf)
+    ensure_mapnik_version(conf)
 
     # todo - check return value of popen otherwise we can end up with
     # return of 'Usage: mapnik-config [OPTION]'
@@ -164,20 +141,25 @@ def build(bld):
     obj.source =  ["src/node_mapnik.cpp",
                    "src/mapnik_map.cpp",
                    "src/mapnik_color.cpp",
-                   #"src/mapnik_geometry.cpp",
-                   #"src/mapnik_feature.cpp",
                    "src/mapnik_image.cpp",
                    "src/mapnik_image_view.cpp",
                    "src/mapnik_grid.cpp",
                    "src/mapnik_grid_view.cpp",
-                   #"src/mapnik_js_datasource.cpp",
-                   #"src/mapnik_memory_datasource.cpp",
                    "src/mapnik_palette.cpp",
                    "src/mapnik_projection.cpp",
                    "src/mapnik_layer.cpp",
                    "src/mapnik_datasource.cpp",
+                   # only supported in node-mapnik master
+                   # since mapnik's abi has been rapidly evolving
+                   # with these classes and they are extras anyway (not worth the effort)
                    #"src/mapnik_featureset.cpp",
-                   #"src/mapnik_expression.cpp"
+                   #"src/mapnik_expression.cpp",
+                   #"src/mapnik_query.cpp"
+                   #"src/mapnik_proj_transform.cpp",
+                   #"src/mapnik_js_datasource.cpp",
+                   #"src/mapnik_memory_datasource.cpp",
+                   #"src/mapnik_geometry.cpp",
+                   #"src/mapnik_feature.cpp",
                   ]
     obj.uselib = "MAPNIK"
     # install 'mapnik' module
