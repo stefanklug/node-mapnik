@@ -10,7 +10,16 @@
 // mapnik
 #include <mapnik/layer.hpp>
 #include <mapnik/params.hpp>
-//#include <mapnik/feature_layer_desc.hpp>
+#include <mapnik/version.hpp>
+
+#if MAPNIK_VERSION <= 200000
+#define active isActive
+#define min_zoom getMinZoom
+#define max_zoom getMaxZoom
+#define queryable isQueryable
+#define active isActive
+#define visible isVisible
+#endif
 
 using namespace v8;
 //using namespace node;
@@ -78,6 +87,15 @@ static void layer_as_json(Local<Object> meta, const mapnik::layer & layer)
         }
     }
 }
+
+#if MAPNIK_VERSION <= 200000
+#undef active
+#undef min_zoom
+#undef max_zoom
+#undef queryable
+#undef active
+#undef visible
+#endif
 
 }
 #endif

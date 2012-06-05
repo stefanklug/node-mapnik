@@ -3,6 +3,7 @@
 #include <node_version.h>
 
 // mapnik
+#include <mapnik/version.hpp>
 
 // mapnik renderers
 #include <mapnik/agg_renderer.hpp>
@@ -15,7 +16,12 @@
 #include <mapnik/map.hpp>
 #include <mapnik/projection.hpp>
 #include <mapnik/layer.hpp>
+
+#if MAPNIK_VERSION > 200000
 #include <mapnik/expression.hpp>
+#else
+#include <mapnik/filter_factory.hpp>
+#endif
 #include <mapnik/image_util.hpp>
 #include <mapnik/config_error.hpp>
 #include <mapnik/load_map.hpp>

@@ -15,6 +15,7 @@
 
 // mapnik
 #include <mapnik/layer.hpp>
+#include <mapnik/version.hpp>
 
 Persistent<FunctionTemplate> Layer::constructor;
 
